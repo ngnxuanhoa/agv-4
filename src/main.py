@@ -1,4 +1,4 @@
-from flask import Flask, render_template, Response, jsonify, request
+from flask import Flask, render_template, Response, jsonify, request, send_from_directory
 import os
 import cv2
 import numpy as np
@@ -86,7 +86,15 @@ def generate_map():
     """Generate map from camera feed"""
     global current_map
     current_map = navigator.generate_map(camera.get_frame())
+    # Save the generated map to a file
+    map_path = os.path.join('static', 'map.png')
+    cv2.imwrite(map_path, current_map)
     return jsonify({'status': 'success'})
+
+@app.route('/static/<path:filename>')
+def static_files(filename):
+    """Serve static files"""
+    return send_from_directory('static', filename)
 
 @app.route('/map/coordinates', methods=['POST'])
 def set_coordinates():
