@@ -1,4 +1,5 @@
 from flask import Flask, render_template, Response, jsonify, request
+import os
 import cv2
 import numpy as np
 import threading
@@ -8,7 +9,7 @@ from motor_controller import MotorController
 from navigation import Navigator
 from obstacle_detection import ObstacleDetector
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='src/templates')  # Adjusted template folder path
 
 # Initialize components
 camera = Camera()
