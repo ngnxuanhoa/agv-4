@@ -9,7 +9,8 @@ from motor_controller import MotorController
 from navigation import Navigator
 from obstacle_detection import ObstacleDetector
 
-app = Flask(__name__, template_folder='src/templates')  # Adjusted template folder path
+# Adjusted template folder path
+app = Flask(__name__, template_folder='src/templates')
 
 # Initialize components
 camera = Camera()
