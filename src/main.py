@@ -9,8 +9,9 @@ from motor_controller import MotorController
 from navigation import Navigator
 from obstacle_detection import ObstacleDetector
 
-# Adjusted template folder path
-app = Flask(__name__, template_folder='src/templates')
+# Determine the absolute path to the templates directory
+template_dir = os.path.abspath('src/templates')
+app = Flask(__name__, template_folder=template_dir)
 
 # Initialize components
 camera = Camera()
