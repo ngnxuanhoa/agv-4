@@ -13,6 +13,10 @@ from obstacle_detection import ObstacleDetector
 template_dir = os.path.abspath('src/templates')
 app = Flask(__name__, template_folder=template_dir)
 
+# Ensure the static directory exists
+static_dir = os.path.abspath('static')
+os.makedirs(static_dir, exist_ok=True)
+
 # Initialize components
 camera = Camera()
 motor_controller = MotorController()
@@ -87,14 +91,15 @@ def generate_map():
     global current_map
     current_map = navigator.generate_map(camera.get_frame())
     # Save the generated map to a file
-    map_path = os.path.join('static', 'map.png')
+    map_path = os.path.join(static_dir, 'map.png')
     cv2.imwrite(map_path, current_map)
+    print(f"Map saved to {map_path}")  # Debugging statement
     return jsonify({'status': 'success'})
 
 @app.route('/static/<path:filename>')
 def static_files(filename):
     """Serve static files"""
-    return send_from_directory('static', filename)
+    return send_from_directory(static_dir, filename)
 
 @app.route('/map/coordinates', methods=['POST'])
 def set_coordinates():
