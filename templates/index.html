@@ -102,4 +102,16 @@
                 autonomousMode ? 'Disable Autonomous Mode' : 'Enable Autonomous Mode';
             
             // Disable/enable control buttons
-            
+            document.querySelectorAll('.control-grid button').forEach(button => {
+                button.disabled = autonomousMode;
+            });
+        }
+
+        function generateMap() {
+            fetch('/map/generate', {
+                method: 'POST'
+            });
+        }
+    </script>
+</body>
+</html>
