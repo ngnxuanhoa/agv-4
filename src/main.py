@@ -11,10 +11,10 @@ from obstacle_detection import ObstacleDetector
 
 # Determine the absolute path to the templates directory
 template_dir = os.path.abspath('src/templates')
-app = Flask(__name__, template_folder=template_dir)
+app = Flask(__name__, template_folder=template_dir, static_folder='static')
 
 # Ensure the static directory exists
-static_dir = os.path.abspath('static')
+static_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'static')
 os.makedirs(static_dir, exist_ok=True)
 
 # Initialize components
