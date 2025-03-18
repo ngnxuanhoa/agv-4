@@ -14,8 +14,11 @@ class Camera:
         self.camera.configure(config)
         # Set Auto White Balance using the correct control value
         self.camera.set_controls({"AwbMode": libcamera.controls.AwbModeEnum.Auto})
-        self.camera.set_controls({"ColourGains": (1.0, 1.0)})  # Adjust color gains if necessary
+        # Adjust color gains to balance colors (tweak these values)
+        self.camera.set_controls({"ColourGains": (1.2, 1.2)})  # Adjust to remove yellow tint
         self.camera.set_controls({"Brightness": 0.5})  # Adjust brightness if necessary
+        self.camera.set_controls({"Contrast": 1.0})  # Adjust contrast if necessary
+        self.camera.set_controls({"Saturation": 1.0})  # Adjust saturation if necessary
         self.camera.start()
 
     def get_frame(self):
