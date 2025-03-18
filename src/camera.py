@@ -1,6 +1,7 @@
 from picamera2 import Picamera2, Preview
 import libcamera
 import cv2
+import numpy as np
 
 class Camera:
     def __init__(self):
@@ -25,6 +26,8 @@ class Camera:
 
     def get_frame(self):
         frame = self.camera.capture_array("main")
+        # Convert to 3-channel BGR format
+        frame = cv2.cvtColor(frame, cv2.COLOR_YUV2BGR_I420)
         # Apply denoising using OpenCV
         frame = cv2.fastNlMeansDenoisingColored(frame, None, 10, 10, 7, 21)
         # Convert BGR to RGB if needed
