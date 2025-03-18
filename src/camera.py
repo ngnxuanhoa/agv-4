@@ -21,18 +21,12 @@ class Camera:
         self.camera.set_controls({"Sharpness": 1.0})
         # Adjust color gains (experiment with these values)
         self.camera.set_controls({"ColourGains": (1.5, 1.2)})
-        # Apply denoising
-        self.apply_denoising()
         self.camera.start()
 
-    def apply_denoising(self):
-        # Denoising using OpenCV
-        frame = self.camera.capture_array("main")
-        frame = cv2.fastNlMeansDenoisingColored(frame, None, 10, 10, 7, 21)
-        return frame
-
     def get_frame(self):
-        frame = self.apply_denoising()
+        frame = self.camera.capture_array("main")
+        # Apply denoising using OpenCV
+        frame = cv2.fastNlMeansDenoisingColored(frame, None, 10, 10, 7, 21)
         # Convert BGR to RGB if needed
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         return frame
