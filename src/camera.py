@@ -1,4 +1,5 @@
 from picamera2 import Picamera2, Preview
+import libcamera
 import cv2
 
 class Camera:
@@ -11,8 +12,8 @@ class Camera:
             display="lores"
         )
         self.camera.configure(config)
-        # Set Auto White Balance
-        self.camera.set_controls({"AwbMode": "auto"})
+        # Set Auto White Balance using the correct control value
+        self.camera.set_controls({"AwbMode": libcamera.controls.AwbModeEnum.Auto})
         self.camera.start()
 
     def get_frame(self):
