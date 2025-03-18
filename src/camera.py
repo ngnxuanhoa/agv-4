@@ -30,6 +30,10 @@ class Camera:
         frame = cv2.cvtColor(frame, cv2.COLOR_YUV2BGR_I420)
         # Apply denoising using OpenCV
         frame = cv2.fastNlMeansDenoisingColored(frame, None, 10, 10, 7, 21)
-        # Convert BGR to RGB if needed
+        # Apply histogram equalization to improve contrast
+        img_yuv = cv2.cvtColor(frame, cv2.COLOR_BGR2YUV)
+        img_yuv[:, :, 0] = cv2.equalizeHist(img_yuv[:, :, 0])
+        frame = cv2.cvtColor(img_yuv, cv2.COLOR_YUV2BGR)
+        # Convert BGR to RGB
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         return frame
