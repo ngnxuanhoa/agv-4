@@ -12,9 +12,9 @@ class Camera:
             display="lores"
         )
         self.camera.configure(config)
-        # Set manual white balance and color gains
-        self.camera.set_controls({"AwbMode": libcamera.controls.AwbModeEnum.Manual})
-        self.camera.set_controls({"ColourGains": (2.0, 1.0)})  # Adjust these values
+        # Set white balance mode to off and manually adjust color gains
+        self.camera.set_controls({"AwbMode": libcamera.controls.AwbModeEnum.Off})
+        self.camera.set_controls({"ColourGains": (2.0, 1.0)})  # Adjust these values to improve color balance
         self.camera.set_controls({"Brightness": 0.5})  # Adjust brightness if necessary
         self.camera.set_controls({"Contrast": 1.0})  # Adjust contrast if necessary
         self.camera.set_controls({"Saturation": 1.0})  # Adjust saturation if necessary
