@@ -15,9 +15,9 @@ class Camera:
         # Set auto white balance
         self.camera.set_controls({"AwbMode": libcamera.controls.AwbModeEnum.Auto})
         # Adjust other settings for better image quality
-        self.camera.set_controls({"Brightness": 0.5})
-        self.camera.set_controls({"Contrast": 1.5})
-        self.camera.set_controls({"Saturation": 1.2})
+        self.camera.set_controls({"Brightness": 1})
+        self.camera.set_controls({"Contrast": 1})
+        self.camera.set_controls({"Saturation": 1})
         self.camera.set_controls({"Sharpness": 1.0})
         self.camera.start()
 
