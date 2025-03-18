@@ -6,9 +6,9 @@ class Camera:
     def __init__(self):
         self.camera = Picamera2()
         # Configure camera settings
-        config = self.camera.create_still_configuration(
-            main={"size": (1640, 1232)},
-            lores={"size": (640, 480)},
+        config = self.camera.create_video_configuration(
+            main={"size": (640, 480), "format": "YUV420"},
+            lores={"size": (640, 480), "format": "SBGGR10_CSI2P"},
             display="lores"
         )
         self.camera.configure(config)
@@ -23,5 +23,5 @@ class Camera:
     def get_frame(self):
         frame = self.camera.capture_array("main")
         # Convert BGR to RGB if needed
-        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)  # Fixed typo here
+        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         return frame
