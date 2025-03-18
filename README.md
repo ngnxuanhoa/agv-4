@@ -61,16 +61,25 @@ python3 -m pip install -r requirements.txt
 
 4. Enable and Configure Camera:
 ```bash
-# Enable legacy camera support
-sudo raspi-config
-# Navigate to Interface Options -> Legacy Camera -> Enable
-# Reboot when prompted
+# Edit /boot/config.txt to enable camera
+sudo nano /boot/config.txt
 
-# Verify camera setup
-vcgencmd get_camera    # Should show "supported=1 detected=1"
+# Add or uncomment these lines:
+camera_auto_detect=1
+dtoverlay=camera
+
+# Save and reboot
+sudo reboot
+
+# After reboot, verify camera setup
+v4l2-ctl --list-devices    # Should list your camera device
 
 # Set camera permissions (if needed)
 sudo usermod -a -G video $USER
+
+# Test camera
+libcamera-hello   # Should show camera preview
+libcamera-jpeg -o test.jpg  # Capture test image
 ```
 
 5. Create required directories:
