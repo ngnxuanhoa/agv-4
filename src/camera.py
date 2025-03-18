@@ -23,4 +23,5 @@ class Camera:
     def get_frame(self):
         frame = self.camera.capture_array("main")
         # Convert BGR to RGB if needed
-        frame = cv2.cvtC
+        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)  # Fixed typo here
+        return frame
