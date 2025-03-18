@@ -16,11 +16,11 @@ class Camera:
         self.camera.set_controls({"AwbMode": libcamera.controls.AwbModeEnum.Auto})
         # Adjust other settings for better image quality
         self.camera.set_controls({"Brightness": 0.5})
-        self.camera.set_controls({"Contrast": 1.0})
+        self.camera.set_controls({"Contrast": 1.2})
         self.camera.set_controls({"Saturation": 1.5})
         self.camera.set_controls({"Sharpness": 1.0})
         # Adjust color gains (experiment with these values)
-        self.camera.set_controls({"ColourGains": (1.0, 2.0)})  # Adjusted values
+        self.camera.set_controls({"ColourGains": (1.3, 1.7)})  # Adjusted values
         self.camera.start()
 
     def get_frame(self):
