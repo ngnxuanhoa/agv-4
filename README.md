@@ -6,12 +6,13 @@ An autonomous guided vehicle (AGV) control system using Raspberry Pi 4 with web-
 
 - Raspberry Pi 4 2GB or higher
 - Raspberry Pi Camera Module 2 NoIR (v2.1 or newer)
-- L298N Motor Driver
+- L298N Motor Driver Module
 - 4x DC Motors (12V)
-- 12V Power Supply
+- 12V/2A Power Supply
 - Motor wheels and chassis
 - Jumper wires
 - Breadboard
+- Power bank for Raspberry Pi (recommended)
 
 ## Software Requirements
 
@@ -44,22 +45,9 @@ sudo apt install -y python3-libcamera
 sudo apt install -y python3-opencv
 sudo apt install -y libcamera-tools
 sudo apt install -y libcamera-apps
-
-# Test camera installation
-libcamera-hello   # Should show camera preview
-libcamera-jpeg -o test.jpg  # Should capture a test image
 ```
 
-3. Install other required packages:
-```bash
-# Install Python and required system packages
-sudo apt install -y python3-pip python3-rpi.gpio
-
-# Install Python dependencies
-python3 -m pip install -r requirements.txt
-```
-
-4. Enable and Configure Camera:
+3. Enable and Configure Camera:
 ```bash
 # Edit /boot/config.txt to enable camera
 sudo nano /boot/config.txt
@@ -74,12 +62,21 @@ sudo reboot
 # After reboot, verify camera setup
 v4l2-ctl --list-devices    # Should list your camera device
 
-# Set camera permissions (if needed)
+# Set camera permissions
 sudo usermod -a -G video $USER
 
 # Test camera
 libcamera-hello   # Should show camera preview
 libcamera-jpeg -o test.jpg  # Capture test image
+```
+
+4. Install other required packages:
+```bash
+# Install Python and required system packages
+sudo apt install -y python3-pip python3-rpi.gpio
+
+# Install Python dependencies from requirements.txt
+python3 -m pip install -r requirements.txt
 ```
 
 5. Create required directories:
@@ -103,43 +100,6 @@ mkdir -p ~/agv-4/src/templates
 #   - ENB: GPIO 25
 ```
 
-## Camera Configuration
-
-1. Basic Camera Settings:
-```python
-# in src/camera.py
-from picamera2 import Picamera2
-
-class Camera:
-    def __init__(self):
-        self.camera = Picamera2()
-        # Configure camera settings
-        config = self.camera.create_still_configuration(
-            main={"size": (1640, 1232)},
-            lores={"size": (640, 480)},
-            display="lores"
-        )
-        self.camera.configure(config)
-        self.camera.start()
-```
-
-2. Camera Troubleshooting:
-```bash
-# Check camera module is recognized
-ls -l /dev/video*
-
-# Test camera with different applications
-libcamera-hello     # Preview
-libcamera-jpeg -o test.jpg    # Still capture
-libcamera-vid -t 10000 -o test.h264    # Video capture
-
-# Check camera logs
-dmesg | grep -i camera
-
-# Verify permissions
-groups ${USER}    # Should include 'video' group
-```
-
 ## Requirements.txt
 ```txt
 flask>=3.0.0
@@ -149,49 +109,178 @@ RPi.GPIO>=0.7.0
 picamera2>=0.3.12
 ```
 
-[... rest of the README content ...]
+## Project Structure
+```
+agv-4/
+├── src/
+│   ├── camera.py           # Camera interface and video streaming
+│   ├── main.py            # Main Flask application
+│   ├── motor_controller.py # Motor control interface
+│   ├── navigation.py      # Navigation and path planning
+│   ├── obstacle_detection.py # Obstacle detection logic
+│   ├── static/           # Static files (generated maps, etc.)
+│   └── templates/        # HTML templates
+│       └── index.html    # Web interface template
+├── requirements.txt      # Python package dependencies
+└── README.md            # Project documentation
+```
+
+## Development Setup
+
+1. Set up Python virtual environment (recommended):
+```bash
+# Install venv module
+sudo apt install python3-venv
+
+# Create virtual environment
+python3 -m venv venv
+
+# Activate virtual environment
+source venv/bin/activate
+
+# Install dependencies
+pip install -r requirements.txt
+```
+
+2. Enable debug mode for development:
+```bash
+export FLASK_DEBUG=1
+python3 src/main.py
+```
+
+## Usage
+
+1. Start the AGV control server:
+```bash
+# Navigate to project directory
+cd ~/agv-4
+
+# If using virtual environment
+source venv/bin/activate
+
+# Start the application
+python3 src/main.py
+```
+
+2. Access the web interface:
+- Open a web browser and navigate to `http://<raspberry-pi-ip>:5000`
+- Default port is 5000
+- Make sure your device is on the same network as the Raspberry Pi
+
+## Features
+
+- Live camera streaming via web browser
+- Real-time obstacle detection using computer vision
+- Automatic map generation from camera feed
+- Autonomous navigation capabilities
+- Manual control through web interface:
+  - Forward/Backward movement
+  - Left/Right turning
+  - Emergency stop
+  - Mode switching (Manual/Autonomous)
 
 ## Troubleshooting
 
-[... previous troubleshooting content ...]
-
-4. Camera Issues:
-   - No camera detected:
-     ```bash
-     # Check camera connection
-     vcgencmd get_camera
-     
-     # Check if camera interface is enabled
-     sudo raspi-config
-     
-     # Verify camera module
-     ls -l /dev/video*
-     ```
+1. Camera Issues:
+   ```bash
+   # Check if camera is detected
+   v4l2-ctl --list-devices
    
-   - Camera permission issues:
-     ```bash
-     # Add user to video group
-     sudo usermod -a -G video $USER
-     
-     # Verify groups
-     groups ${USER}
-     ```
+   # Verify camera device
+   ls -l /dev/video*
    
-   - Poor image quality:
-     ```bash
-     # Test with different resolutions
-     libcamera-jpeg -o test_hq.jpg --width 2028 --height 1520
-     
-     # Check camera focus
-     # Manually adjust camera focus if using adjustable lens
-     ```
+   # Check camera permissions
+   groups ${USER}    # Should include 'video' group
+   
+   # Test camera functionality
+   libcamera-hello
+   libcamera-jpeg -o test.jpg
+   ```
 
-   - Camera errors in code:
-     ```python
-     # Debug camera initialization
-     from picamera2 import Picamera2
-     picam2 = Picamera2()
-     print(picam2.camera_properties)  # Check camera properties
-     ```
+2. Motors not responding:
+   ```bash
+   # Check GPIO permissions
+   ls -l /dev/gpiomem    # Should be readable by 'gpio' group
+   sudo usermod -a -G gpio $USER
+   
+   # Test GPIO pins
+   gpio readall    # Check pin states
+   ```
 
-[... rest of the README content ...]
+3. Web interface not accessible:
+   ```bash
+   # Check network connectivity
+   hostname -I    # Get Raspberry Pi IP address
+   
+   # Test Flask server
+   curl http://localhost:5000
+   
+   # Check firewall settings
+   sudo ufw status
+   ```
+
+## Network Configuration:
+```bash
+# Configure WiFi
+sudo raspi-config
+# System Options -> Wireless LAN
+# Enter your WiFi SSID and password
+
+# Find Raspberry Pi's IP address
+hostname -I
+# or
+ip addr show
+```
+
+## Maintenance
+
+1. Regular Checks:
+   - Camera lens cleaning
+   - Motor alignment
+   - Wheel condition
+   - Battery levels
+   - Cable connections
+
+2. Software Updates:
+   ```bash
+   # Update system
+   sudo apt update && sudo apt upgrade -y
+   
+   # Update Python packages
+   pip install --upgrade -r requirements.txt
+   ```
+
+3. Backup:
+   ```bash
+   # Backup configuration
+   cp -r ~/agv-4 ~/agv-4-backup-$(date +%Y%m%d)
+   ```
+
+## Safety Considerations
+
+1. Physical Safety:
+   - Ensure clear operating space
+   - Keep cables properly managed
+   - Install emergency stop button
+   - Test in controlled environment first
+
+2. System Safety:
+   - Set motor speed limits
+   - Implement collision detection
+   - Regular calibration of sensors
+   - Backup power management
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Last Updated
+2025-03-18 by @ngnxuanhoa ▋
