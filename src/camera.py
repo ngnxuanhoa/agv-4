@@ -8,7 +8,7 @@ class Camera:
         # Configure camera settings
         config = self.camera.create_video_configuration(
             main={"size": (640, 480), "format": "YUV420"},
-            lores={"size": (640, 480), "format": "SBGGR10_CSI2P"},
+            lores={"size": (320, 240), "format": "YUV420"},  # Changed to a supported format
             display="lores"
         )
         self.camera.configure(config)
