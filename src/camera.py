@@ -21,8 +21,6 @@ class Camera:
         self.camera.set_controls({"Sharpness": 1.0})
         # Adjust color gains (experiment with these values)
         self.camera.set_controls({"ColourGains": (1.2, 1.8)})
-        # Apply denoising
-        self.camera.set_controls({"NoiseReductionMode": libcamera.controls.denoise_Off})
         self.camera.start()
 
     def get_frame(self):
