@@ -8,16 +8,17 @@ class Camera:
         # Configure camera settings
         config = self.camera.create_video_configuration(
             main={"size": (640, 480), "format": "YUV420"},
-            lores={"size": (320, 240), "format": "YUV420"},  # Changed to a supported format
+            lores={"size": (320, 240), "format": "YUV420"},
             display="lores"
         )
         self.camera.configure(config)
-        # Adjust color gains to balance colors (experiment with these values)
-        self.camera.set_controls({"ColourGains": (2.0, 1.0)})  # Adjust these values
-        self.camera.set_controls({"Brightness": 0.5})  # Adjust brightness if necessary
-        self.camera.set_controls({"Contrast": 1.0})  # Adjust contrast if necessary
-        self.camera.set_controls({"Saturation": 1.0})  # Adjust saturation if necessary
-        self.camera.set_controls({"Sharpness": 1.0})  # Adjust sharpness if necessary
+        # Set auto white balance
+        self.camera.set_controls({"AwbMode": libcamera.controls.AwbModeEnum.Auto})
+        # Adjust other settings for better image quality
+        self.camera.set_controls({"Brightness": 0.5})
+        self.camera.set_controls({"Contrast": 1.5})
+        self.camera.set_controls({"Saturation": 1.2})
+        self.camera.set_controls({"Sharpness": 1.0})
         self.camera.start()
 
     def get_frame(self):
